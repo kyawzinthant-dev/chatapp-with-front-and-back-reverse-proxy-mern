@@ -43,7 +43,6 @@ require('./routes/userRoutes')(app);
 // saveMessage("latest message ","5f64a46f551ad825fcefb84e","5f7478ca2fe0ce14e8dc255d","9a876ff4-9e62-4afa-a6f2-0e1737487e4e");
 // saveMessage("latest latest ","5f7478ca2fe0ce14e8dc255d","5f64a46f551ad825fcefb84e","9a876ff4-9e62-4afa-a6f2-0e1737487e4e");
 
-const PORT = process.env.PORT || 5000;
 
 
 io.on('connection',(socket)=>{
@@ -91,6 +90,17 @@ online.on('connection',socket => {
 
     })
 })
+
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static('client/build'));
+
+    const path = require('path');
+    app.get('*', (req,res)=>{
+        res.sendFile(path.resolve(__dirname,'client','build','index.html'));
+    })
+
+}
+const PORT = process.env.PORT || 5000;
 
 server.listen(PORT,()=>{
     console.log(`listening on port ${PORT}`)
