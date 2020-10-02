@@ -24,7 +24,7 @@ passport.deserializeUser((id, done) => {
         proxy: true,
       },
       async (accessToken, refreshToken, profile, done) => {
-    
+          console.log(accessToken)
         const existingUser = await User.findOne({ login_id: profile.id });
   
         if (existingUser) {
