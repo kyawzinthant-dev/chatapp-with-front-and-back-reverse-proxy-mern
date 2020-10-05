@@ -24,11 +24,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-app.use(function(req, res, next) {
-    req.headers['if-none-match'] = 'no-match-for-this';
-    next();    
-  });
-  
+
 // app.use(cors());
 app.use(bodyParser.json());
 
