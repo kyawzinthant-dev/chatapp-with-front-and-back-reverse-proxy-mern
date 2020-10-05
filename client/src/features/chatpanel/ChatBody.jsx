@@ -24,7 +24,7 @@ function ChatBody({socket, user,room}) {
         messageEndRef.current.scrollIntoView();
         disablePageScroll(scrollRef.current);
        
-    }, [])
+    }, [dispatch])
     useEffect(() => {
         messageEndRef.current.scrollIntoView();
     }, [])
