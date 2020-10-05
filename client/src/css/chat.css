@@ -182,12 +182,14 @@
 }
 
 #message-wrapper{
+    
     width: 1420px;
     background-color: rgba(40, 48, 73, 0.938);
     overflow-y: scroll;
     scrollbar-width: thin;          /* "auto" or "thin"  */
     scrollbar-color: rgba(189, 172, 228, 0.39) rgb(150, 173, 223);   /* scroll thumb & track */
 }
+
 #message-wrapper::-webkit-scrollbar {
     width: 6px;
 }
@@ -270,7 +272,7 @@
     }
     #message-wrapper{
         width: 100%;
-
+        height:618px;
     }
     .selfmessage{
         max-width: 70%;
