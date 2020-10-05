@@ -8,7 +8,6 @@ import { Provider } from "react-redux";
 import { configureStore } from "./app/store/configureStore";
 
 const store = configureStore();
-console.log(store.getState())
 const rootEl = document.getElementById("root");
 
 function render() {

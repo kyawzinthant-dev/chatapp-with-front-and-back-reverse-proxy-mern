@@ -18,12 +18,9 @@
     line-height: 1.5;
     color: #212529;
     text-align: left;
-    background-color: black;
-     /* background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.pixelstalk.net%2Fwp-content%2Fuploads%2F2016%2F06%2FBlack-And-Red-Wallpaper-HD-For-Desktop.jpg&f=1&nofb=1') !important; */
+    background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.pixelstalk.net%2Fwp-content%2Fuploads%2F2016%2F06%2FBlack-And-Red-Wallpaper-HD-For-Desktop.jpg&f=1&nofb=1') !important;
      }
-     #root{
-       background-color: black;
-     }
+ 
   [tabindex="-1"]:focus {
     outline: 0 !important; }
   

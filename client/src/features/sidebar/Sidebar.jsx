@@ -31,7 +31,6 @@ function Sidebar({socket,online,children}) {
         dispatch(getUsers());
         dispatch(getRequest());
         dispatch(getResponse());
-        console.log(user);
         return () => {
         }
     }, [dispatch])

@@ -21,6 +21,15 @@ function Chat() {
     const dispatch = useDispatch();
     const history = useHistory();
     let join = false;
+    useEffect(()=>{
+        var timeout = setTimeout(()=>{
+            if(!user._id)
+            history.push("/");
+        },5000)
+        return()=>{
+            clearTimeout(timeout)
+        }
+    },[user])
 
     useEffect(()=>{
         if(socket && room){
@@ -28,7 +37,6 @@ function Chat() {
             if(did === user._id){
                 dispatch(getContacts());
                 if(room === droom){
-                    console.log("push");
                     history.push('/chat');
                 }
             }
@@ -40,9 +48,8 @@ function Chat() {
     },[room])
 
     useEffect(()=>{
-        
         if(user._id && !join){
-            socket = io();
+            socket = io('localhost:5000/');
             socket.emit('join',{
             uid:user._id
         })
@@ -65,7 +72,7 @@ function Chat() {
         })
 
         socket.on('updateRequest',({to})=>{
-            console.log("request arrive");
+           
             if(to === user._id){
          
                 dispatch(getRequest());
