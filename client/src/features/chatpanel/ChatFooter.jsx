@@ -42,11 +42,11 @@ function ChatFooter({guest,socket,user,room}) {
             message,
             to:guest.id,
             uuid,
-            room
+            room,
+            name:user.name
         })
         setMessage('');
         messageRef.current.focus();
-        
         dispatch(sendMessage(user._id,message,guest.id,uuid,user.name,true))
       
     }

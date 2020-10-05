@@ -96,8 +96,8 @@ io.on('connection',(socket)=>{
         console.log(message)
         const user = getUser(message.room,message.to);
         if(user){
-        io.to(user.room).emit('arrivemessage', {uid:message.uid,message:message.message,name:user.name,gid:message.to});
-        saveMessage(message.message,message.uuid,message.uid,message.to,user.room,user.name);
+        io.to(user.room).emit('arrivemessage', {uid:message.uid,message:message.message,name:message.name,gid:message.to});
+        saveMessage(message.message,message.uuid,message.uid,message.to,user.room,message.name);
         }
     })
 
