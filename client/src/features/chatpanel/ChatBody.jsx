@@ -5,7 +5,7 @@ import { arriveMessage, getMessage } from '../messages/messageActions';
 import FlipMove from 'react-flip-move';
 import axios from 'axios';
 import { asyncActionFinish, asyncActionStart } from '../../app/async/asyncReducer';
-import {disablePageScroll,enablePageScroll} from 'scroll-lock';
+
 function ChatBody({socket, user,room}) {
     const msg = useSelector(state=>state.msg);
     const dispatch = useDispatch();
@@ -21,8 +21,7 @@ function ChatBody({socket, user,room}) {
     useEffect(() => {
         dispatch(getMessage(room,limit));
         messageEndRef.current.scrollIntoView();
-        disablePageScroll(scrollRef.current)
-    }, [dispatch,room])
+    }, [dispatch,room,guest])
     useEffect(() => {
         messageEndRef.current.scrollIntoView();
     }, [])
@@ -58,7 +57,7 @@ function ChatBody({socket, user,room}) {
             setTimeout(()=>{
                 setLoading(false);
                 setLoaded(false);
-            },2000)
+            },1000)
            
     }
     async function deleteMsg(uuid){
