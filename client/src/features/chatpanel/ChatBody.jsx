@@ -5,7 +5,6 @@ import { arriveMessage, getMessage } from '../messages/messageActions';
 import FlipMove from 'react-flip-move';
 import axios from 'axios';
 import { asyncActionFinish, asyncActionStart } from '../../app/async/asyncReducer';
-import { disablePageScroll, enablePageScroll } from 'scroll-lock';
 
 function ChatBody({socket, user,room}) {
     const msg = useSelector(state=>state.msg);
@@ -22,7 +21,7 @@ function ChatBody({socket, user,room}) {
     useEffect(() => {
         dispatch(getMessage(room,limit));
         messageEndRef.current.scrollIntoView();
-        disablePageScroll(scrollRef.current);
+        scrollRef.current.scrollTop = 99999;
        
     }, [dispatch])
     useEffect(() => {
