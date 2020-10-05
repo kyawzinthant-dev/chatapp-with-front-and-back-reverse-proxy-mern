@@ -273,11 +273,11 @@
 
     }
     .selfmessage{
-        min-width: 70%;
+        max-width: 70%;
         text-align: justify;
     }
     .othermessage{
-        min-width: 70%;
+        max-width: 70%;
         text-align: justify;
     }
 

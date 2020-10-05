@@ -5,7 +5,8 @@ import { arriveMessage, getMessage } from '../messages/messageActions';
 import FlipMove from 'react-flip-move';
 import axios from 'axios';
 import { asyncActionFinish, asyncActionStart } from '../../app/async/asyncReducer';
-let listen = false;
+import { disablePageScroll, enablePageScroll } from 'scroll-lock';
+
 function ChatBody({socket, user,room}) {
     const msg = useSelector(state=>state.msg);
     const dispatch = useDispatch();
@@ -15,11 +16,13 @@ function ChatBody({socket, user,room}) {
     const [loading, setLoading] = useState(false);
     const [loaded,setLoaded] = useState(false);
     const guest = useSelector(state=>state.guest);
-    
+    const scrollRef = useRef(null);
     const [sendStatus, setSendStatus] = useState("fa fa-clock-o")
     
     useEffect(() => {
         dispatch(getMessage(room,limit));
+        disablePageScroll(scrollRef.current);
+       
     }, [])
     useEffect(() => {
         messageEndRef.current.scrollIntoView();
@@ -31,16 +34,20 @@ function ChatBody({socket, user,room}) {
     
 
     useEffect(()=>{
-        if(socket && guest.id && !listen){
-            listen = true;
-            socket.on('arrivemessage',({uid,message,name,gid})=>{
 
+        if(socket && guest.id){
+        
+            socket.on('arrivemessage',({uid,message,name,gid})=>{
             if(gid === user._id && uid === guest.id){
                 dispatch(arriveMessage(message,uid,name))
             }else{
                 setSendStatus('fa fa-check')
             }
         })
+    }
+    return ()=>{
+        if(socket)
+        socket.off('arrivemessage')
     }
     },[socket,guest.id])
 
@@ -49,8 +56,11 @@ function ChatBody({socket, user,room}) {
             setLoaded(true);
             setLimit(prev=>prev+20);
             await dispatch(getMessage(room,limit));
-            setLoading(false);
-            setLoaded(false);
+            setTimeout(()=>{
+                setLoading(false);
+                setLoaded(false);
+            },2000)
+           
     }
     async function deleteMsg(uuid){
         dispatch(asyncActionStart())
@@ -59,7 +69,7 @@ function ChatBody({socket, user,room}) {
     }
     return (
         <div id="chatBody">
-            <div tabIndex={0} id="message-wrapper" onScroll={e=>{
+            <div ref={scrollRef} tabIndex={0} id="message-wrapper" onScroll={e=>{
                  if(e.target.scrollTop === 0){
                      loadMsg()
                      e.target.scrollTop = 10;
