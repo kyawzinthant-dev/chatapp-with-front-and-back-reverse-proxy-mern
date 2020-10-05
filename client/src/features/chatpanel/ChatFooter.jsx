@@ -31,7 +31,7 @@ function ChatFooter({guest,socket,user,room}) {
         }
     }
     return ()=>{
-        clearTimeout(timeout);
+       
     }
     },[message,socket])
 

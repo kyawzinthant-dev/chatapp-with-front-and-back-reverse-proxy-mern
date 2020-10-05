@@ -104,7 +104,7 @@ io.on('connection',(socket)=>{
     socket.on('typing',({uid,to,room})=>{
         const user = getUser(room,uid);
         if(user)
-        socket.to(user.room).emit('arriveTyping', {uid,name:user.name,gid:to});
+        io.to(user.room).emit('arriveTyping', {uid,name:user.name,gid:to});
     })
 
     socket.on('delete',({did,room})=>{
