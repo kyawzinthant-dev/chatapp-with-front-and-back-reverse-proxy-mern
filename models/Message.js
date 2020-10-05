@@ -6,7 +6,8 @@ const messageSchema = new Schema({
     uuid:String,
     from:{type:Schema.Types.ObjectId, ref:'User'},
     to:{type:Schema.Types.ObjectId, ref:'User'},
-    room:String
+    room:String,
+    name:String
 },{timestamps:true})
 
 module.exports = mongoose.model('Message', messageSchema);

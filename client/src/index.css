@@ -18,12 +18,12 @@
     line-height: 1.5;
     color: #212529;
     text-align: left;
-    background-color: rgb(190, 190, 255) !important;
-
+    background-color: black;
+     /* background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.pixelstalk.net%2Fwp-content%2Fuploads%2F2016%2F06%2FBlack-And-Red-Wallpaper-HD-For-Desktop.jpg&f=1&nofb=1') !important; */
      }
-   #root{
-     background-color: rgb(106, 106, 116) !important;
-   }
+     #root{
+       background-color: black;
+     }
   [tabindex="-1"]:focus {
     outline: 0 !important; }
   
@@ -7710,12 +7710,14 @@
   #sidebar {
     min-width: 250px;
     max-width: 250px;
-    background: #121316;
+    background: #121316f6;
     color: #fff;
     -webkit-transition: all 1s;
     -o-transition: all 1s;
     transition: all 1s;
-    position: relative; }
+    position: relative;
+    z-index: 1;
+  }
     #sidebar .h6 {
       color: #fff; }
     #sidebar.active {

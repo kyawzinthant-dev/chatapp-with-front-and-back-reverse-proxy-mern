@@ -11,19 +11,24 @@ const {addUser, removeUser,getUser } = require('./services/chatuser');
 const {addOnline, removeOnline, getOnline } = require('./services/onlineuser');
 
 require('./models/User');
-require('./models/Message');
+const Messages = require('./models/Message');
 require('./services/passport');
 
 const { saveMessage } = require('./controllers');
 
 
-mongoose.connect(keys.mongoURI,{ useNewUrlParser: true,useUnifiedTopology: true });
+mongoose.connect(keys.mongoURI,{ useNewUrlParser: true,useUnifiedTopology: true,useFindAndModify: false  });
 
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+app.use(function(req, res, next) {
+    req.headers['if-none-match'] = 'no-match-for-this';
+    next();    
+  });
+  
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -43,53 +48,84 @@ require('./routes/userRoutes')(app);
 // saveMessage("latest message ","5f64a46f551ad825fcefb84e","5f7478ca2fe0ce14e8dc255d","9a876ff4-9e62-4afa-a6f2-0e1737487e4e");
 // saveMessage("latest latest ","5f7478ca2fe0ce14e8dc255d","5f64a46f551ad825fcefb84e","9a876ff4-9e62-4afa-a6f2-0e1737487e4e");
 
-
+// Messages.deleteMany({
+//     room:"8aaf9394-5966-404c-b6ad-2f0d6b37a7d9"
+// }).exec()
 
 io.on('connection',(socket)=>{
     console.log("We have got a new connection!!!");
-    socket.on('test',message=>{
-        console.log(message)
-    })
-    socket.on('join',({uid,room}, callback)=>{
-        console.log("someonehere")
-        if(uid){
-        const {user} = addUser({id:socket.id,uid,room});
-        socket.join(user.room);
-        }
- 
+  
+    socket.on('join',({uid})=>{
+        user_id = uid;
+        addOnline({uid:user_id, skid:socket.id});
+        io.emit('updateOnline',getOnline().map(e=>{return {uid:e.uid}}))
+  
     });
+
+    socket.on('joinroom',({uid,room,name})=>{
+        const {user} = addUser({id:socket.id,uid,room,name});
+        socket.join(user.room);
+    })
+
+    socket.on('sendRequest',({to})=>{
+        setTimeout(()=>{
+            socket.broadcast.emit('updateResponse', {
+                to
+            });
+        },3000)
+        
+    })
+
+    socket.on('acceptResponse',({to})=>{
+        setTimeout(()=>{
+            socket.broadcast.emit('updateRequestandContact', {
+                to
+            });
+        },3000)
+    })
+
+    socket.on('denyResponse',({to})=>{
+        setTimeout(()=>{
+            socket.broadcast.emit('updateRequest', {
+            to
+        })},3000)
+        
+    })
 
     socket.on('sendMessage',(message)=>{
         console.log(message)
+        const user = getUser(message.room,message.to);
+        if(user){
+        io.to(user.room).emit('arrivemessage', {uid:message.uid,message:message.message,name:user.name,gid:message.to});
+        saveMessage(message.message,message.uuid,message.uid,message.to,user.room,user.name);
+        }
+    })
 
-        const user = getUser(message.uid);
-        console.log(socket.id)
-        socket.to(user.room).emit('arrivemessage', {uid:user.uid,message:message.message});
-        saveMessage(message.message,message.uuid,message.uid,message.to,user.room);
-    
+    socket.on('typing',({uid,to,room})=>{
+        const user = getUser(room,uid);
+        if(user)
+        socket.to(user.room).emit('arriveTyping', {uid,name:user.name,gid:to});
+    })
+
+    socket.on('delete',({did,room})=>{
+        const user = getUser(room,did);
+        if(user)
+        setTimeout(()=>{
+            socket.to(user.room).emit('updateDelete',{
+                did,
+                droom:room
+            })    
+        },3000)
+        
     })
 
     socket.on('disconnect',()=>{
-        const user = removeUser(socket.id);
-        
+        removeUser(socket.id);
+        removeOnline(socket.id);
+        io.emit('updateOnline',getOnline().map(e=>{return {uid:e.uid}}))
     })
 });
 
-const online = io.of('/online');
-
-online.on('connection',socket => {
-
-    socket.on('join',message=>{
-        user_id = message.uid;
-        addOnline({uid:user_id, skid:socket.id});
-        online.emit('updateOnline',getOnline().map(e=>{return {uid:e.uid}}))
-    })
-    socket.on('disconnect',()=>{
-        removeOnline(socket.id);
-        online.emit('updateOnline',getOnline().map(e=>{return {uid:e.uid}}))
-
-    })
-})
 
 if(process.env.NODE_ENV === 'production'){
     app.use(express.static('client/build'));

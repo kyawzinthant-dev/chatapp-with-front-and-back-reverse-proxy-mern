@@ -1,9 +1,9 @@
 const users = [];
 
-const addUser = ({ id,uid,room }) => {
+const addUser = ({ id,uid,room,name }) => {
     const existingUser = users.find((user)=> user.room === room && user.uid === uid);
     if(!existingUser){
-        const user = {id,uid,room};
+        const user = {id,uid,room,name};
 
         users.push(user);
         console.log(users)
@@ -23,6 +23,6 @@ const removeUser = (id) => {
         return users.splice(index,1)[0]
     }
 }
-const getUser = (uid) => users.find((user)=> user.uid===uid);
+const getUser = (room,uid) => users.find((user)=> user.room===room && user.uid === uid);
 
 module.exports = { addUser, removeUser, getUser }

@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Message = require('../models/Message');
 const {v4} = require('uuid');
+ObjectId = require('mongodb').ObjectID;
 
 module.exports = (app) => {
    app.get('/api/users',(req,res)=>{
@@ -9,22 +10,24 @@ module.exports = (app) => {
        )
        .exec((err,data)=>{
            if(err){
-               res.send(err)
+               res.json({
+                   err
+               })
            }else{
                var newdata = [];
                newdata = data.filter(ele=>{
                         if(ele.contacts.length > 0){
                    
                         for(var i=0; i < ele.contacts.length; i++){
-                            console.log(ele.contacts[i].id)
-                            if(ele.contacts[i].id === req.user._id)
+                            if(ele.contacts[i].id === req.user._id.toString()){
                             return false;
+                            }
                         }
                     }
                     if(ele.request.length > 0){
                    
                         for(var i=0; i < ele.request.length; i++){
-                            if(ele.request[i].id === req.user._id)
+                            if(ele.request[i].id === req.user._id.toString())
                             return false;
                         }
                     }
@@ -32,14 +35,14 @@ module.exports = (app) => {
                     if(ele.response.length > 0){
                 
                         for(var i=0; i < ele.response.length; i++){
-                            if(ele.response[i].id.toString() == req.user._id){
+                            if(ele.response[i].id === req.user._id.toString()){
                             return false;
                             }
                         }
                     }
                         return true;
                })
-               res.send(newdata);
+               res.json(newdata);
            }
        })
    })
@@ -48,7 +51,9 @@ module.exports = (app) => {
     User.find({_id:req.user._id})
     .exec((err,data)=>{
         if(err){
-            res.send(err)
+            res.json({
+                err
+            })
         }else{
             res.json(data)
         }
@@ -68,15 +73,15 @@ module.exports = (app) => {
             .exec((err,data)=>{
                 if(data.length < 1){
                     const uuid = v4();
-                    User.update({_id:req.user._id},{
+                    User.findOneAndUpdate({_id:req.user._id},{
                         $push:{
                             request:{
-                                 id:req.params.userid,
+                                 id:userid,
                                  room:uuid
                             }
                         }
                     }).exec((err,data)=>{
-                        User.update({_id:req.params.userid},{
+                        User.findOneAndUpdate({_id:userid},{
                             $push:{
                                 response:{
                                      id:req.user._id.toString(),
@@ -84,47 +89,44 @@ module.exports = (app) => {
                                 }
                             }
                         }).exec((err,data)=>{
-                            res.json(req.user)
+                            res.json(data)
                         })
                        
                     })
-
-                   
                 }
-                    else{
-                        res.json(data);
-                    }
                 
             })
         }
     })
+   
+
 })
 
 app.get('/api/responseaccept/:userid',(req,res)=>{
     const userid = req.params.userid;
-    User.find({'response.id':userid}).exec((err,data)=>{
-        data[0].response.map(e=>{
-            if(e.id === userid){
-                User.updateOne({_id:req.user._id},{
+    const uuid = v4();
+    User.findOneAndUpdate({_id:req.user._id},
+        {
+            $push:{
+                contacts:{
+                    id:userid,
+                    room: uuid
+                }
+            },
+            $pull:{
+                response:{
+                    id:userid
+                }
+            }
+        },
+       
+        ).exec((err,data)=>{
+            User.findOneAndUpdate({_id:userid},
+                {
                     $push:{
                         contacts:{
-                             id:e.id,
-                             room:e.room
-                        }
-                    },
-                    $pull:{
-                        response:{
-                            id:e.id
-                        }
-                    }
-                }).exec((err,data)=>{
-                })
-
-                User.updateOne({_id:e.id},{
-                    $push:{
-                        contacts:{
-                             id:req.user._id,
-                             room:e.room
+                            id:req.user._id.toString(),
+                            room: uuid
                         }
                     },
                     $pull:{
@@ -132,45 +134,71 @@ app.get('/api/responseaccept/:userid',(req,res)=>{
                             id:req.user._id.toString()
                         }
                     }
-                }).exec((err,data)=>{
-                    res.send("Success accepted!")
+                },
+              
+                ).exec((err,data2)=>{
+                    res.json(data2)
                 })
-
-            }
         })
-    })
 
+ 
 });
 app.get('/api/responsedeny/:userid',(req,res)=>{
     const userid = req.params.userid;
-    User.find({'response.id':userid}).exec((err,data)=>{
-        data[0].response.map(e=>{
-            if(e.id === userid){
-                User.updateOne({_id:req.user._id},{
-                    $pull:{
-                        response:{
-                            id:e.id
-                        }
-                    }
-                }).exec((err,data)=>{
-                })
-
-                User.updateOne({_id:e.id},{
+    User.findOneAndUpdate({_id:req.user._id},
+        {
+            $pull:{
+                response:{
+                    id:userid
+                }
+            }
+        }
+        ).exec((err,data)=>{
+            User.findOneAndUpdate({_id:userid},
+                {
                     $pull:{
                         request:{
                             id:req.user._id.toString()
                         }
                     }
-                }).exec((err,data)=>{
-                    res.send("deny accepted!")
+                }
+                ).exec((err,data)=>{
+                    
                 })
-
-            }
         })
-    })
 
+        res.json("success")
 
 });
+
+app.get('/api/deletecontact/:userid/:room',(req,res)=>{
+    const userid = req.params.userid;
+    const room = req.params.room;
+    User.findOneAndUpdate({_id:req.user._id},{
+        $pull:{
+            contacts:{
+                id:userid
+            }
+        }
+    }).exec((err,data)=>{
+
+        User.findOneAndUpdate({_id:userid},{
+            $pull:{
+                contacts:{
+                    id:req.user._id.toString()
+                }
+            }
+        }).exec((err,data)=>{
+            Message.deleteMany({
+                room:room
+            }).exec()
+            res.json("success")
+        })
+       
+    })
+   
+ 
+})
 
 
 app.get('/api/contacts/',(req,res)=>{
@@ -178,8 +206,8 @@ app.get('/api/contacts/',(req,res)=>{
     User.find({_id:userid})
     
     .exec(async (err,data)=>{
-        const contacts = data[0].contacts;
-        const result = await new Promise((res,rej)=>{
+        if(data[0].contacts.length > 0){
+            const contacts = data[0].contacts;
             const contact_array = [];
             let count = 0;
             contacts.map((contact)=>{
@@ -192,22 +220,24 @@ app.get('/api/contacts/',(req,res)=>{
                     contact_obj.name = data[0].name;
                     contact_array.push(contact_obj);
                     if(count === contact_array.length)
-                    res(contact_array);
+                    res.json(contact_array)
                 })
             })
+        }else{
+            res.json([])
+        }
+  
         })
-        
-        res.json(result)
-    })
  })
 
  app.get('/api/request/',(req,res)=>{
     const userid = req.user._id;
     User.find({_id:userid})
     
-    .exec(async (err,data)=>{
+    .exec((err,data)=>{
+        if(data[0].request.length > 0){
         const request = data[0].request;
-        const result = await new Promise((res,rej)=>{
+   
             const request_array = [];
             let count = 0;
             request.map((requ)=>{
@@ -220,12 +250,14 @@ app.get('/api/contacts/',(req,res)=>{
                     request_obj.name = data[0].name;
                     request_array.push(request_obj);
                     if(count === request_array.length)
-                    res(request_array);
+                    res.json(request_array)
                 })
             })
-        })
-        
-        res.json(result)
+     
+        }else{
+            res.json([])
+        }
+       
     })
  })
 
@@ -233,9 +265,9 @@ app.get('/api/contacts/',(req,res)=>{
     const userid = req.user._id;
     User.find({_id:userid})
     
-    .exec(async (err,data)=>{
-        const response = data[0].response;
-        const result = await new Promise((res,rej)=>{
+    .exec((err,data)=>{
+        if(data[0].response.length > 0){
+            const response = data[0].response;
             const response_array = [];
             let count = 0;
             response.map((resp)=>{
@@ -248,13 +280,15 @@ app.get('/api/contacts/',(req,res)=>{
                     response_obj.name = data[0].name;
                     response_array.push(response_obj);
                     if(count === response_array.length)
-                    res(response_array);
+                    res.json(response_array)
                 })
             })
+
+        }else{
+            res.json([])
+        }
+
         })
-        
-        res.json(result)
-    })
  })
 
  app.get('/api/messages/:roomId/:limit',(req,res)=>{
@@ -272,7 +306,7 @@ app.get('/api/contacts/',(req,res)=>{
  app.get('/api/deletemessage/:uuid',(req,res)=>{
      const uuid = req.params.uuid;
      Message.deleteOne({uuid}).then(()=>{
-         console.log("msg deleted")
+         res.json('success deleted')
      })
  })
 
