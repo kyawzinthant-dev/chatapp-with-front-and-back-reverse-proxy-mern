@@ -49,7 +49,7 @@ function Chat() {
 
     useEffect(()=>{
         if(user._id && !join){
-            socket = io('localhost:5000/');
+            socket = io();
             socket.emit('join',{
             uid:user._id
         })
