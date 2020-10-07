@@ -1,5 +1,5 @@
 .users{
-    background-color: rgb(40, 43, 53);
+    background-color: rgba(24, 24, 24, 0.336);
     margin-top: 10px;
     text-align: center;
     height: 40px;
@@ -10,8 +10,9 @@
     width: 210px;
 }
 .contactname{
-    color: rgb(191, 224, 194);
+    color:white;
     margin-left: 35px;
+    font-size: 13px;
 }
 
 .connect{
@@ -32,11 +33,11 @@
     width: 10px;
     height: 10px;
     border-radius: 100%;
-    background-color: rgb(80, 72, 72);
+    background-color: rgba(26, 27, 27, 0.253);
     bottom: 0;
     left:10px;
     bottom:14px;
-    box-shadow: 0 0 10px rgb(110, 105, 105);
+    /* box-shadow: 0 0 10px rgb(12, 12, 12); */
 }
 .search:focus{
     outline: none !important;
@@ -47,17 +48,19 @@
 .search{
     border: none !important;
     padding:10px !important;
-    background-color: rgb(70, 76, 87) !important;
-    color:'white' !important;
+    background-color: rgb(12, 12, 12) !important;
+    color:'black' !important;
     width:200px;
 }
 .logout{
-    color: rgb(255, 255, 255) !important;
+    color: rgb(78, 15, 4) !important;
     font-weight: bold;
     font-family: 'Baloo Tammudu 2', cursive;
-    bottom: 30%;
+    position: absolute;
+    bottom: 30px;
     margin: 0 auto;
-    background-color: rgb(0, 0, 0) !important;
+    width: 200px;
+    background-color: rgba(17, 18, 19, 0.568) !important;
     padding-top: 10px !important;
     transition: 0.5s !important;
     text-align: center;
@@ -126,7 +129,7 @@
 }
 
 .chatheader{
-    background-color: rgb(26, 26, 31);
+    background-color: rgb(0, 0, 0);
     height: 70px;
     display: flex;
     padding-left: 20px;
@@ -143,7 +146,7 @@
 }
 
 .status{
-    background-color: rgb(26, 26, 31);
+    background-color: rgb(0, 0, 0);
     height: 30px;
     display: flex;
     justify-content: center;
@@ -183,7 +186,7 @@
 
 #message-wrapper{
     
-    width: 1420px;
+    width: 1020px;
     background-color: rgba(40, 48, 73, 0.938);
     overflow-y: scroll;
     scrollbar-width: thin;          /* "auto" or "thin"  */
@@ -333,15 +336,14 @@
   }
 
   .searchResult{
-      background-color: rgb(14, 15, 20);
-      position: absolute;
+    position: absolute;
       width: 202px;
       max-height: 300px;
       overflow-y: auto;
   }
 
   .searchResult li{
-      background-color: rgb(34, 32, 37);
+      background-color: rgba(3, 3, 3, 0.877);
       margin-top: 3px;
       width: 202px;
       height: 55px;
@@ -352,7 +354,7 @@
   }
 
   .searchResult li:hover{
-      background-color: rgb(61, 61, 61);
+      background-color: rgb(72, 75, 75);
       cursor: pointer;
   }
 
@@ -434,7 +436,7 @@
     position: absolute;
     right: 5px;
     top:12px;
-    color: rgb(82, 81, 81);
+    color: rgba(54, 54, 54, 0.5);
 }
 .fa-user-times:hover{
     cursor: pointer;

@@ -9,7 +9,7 @@ import Loading from "../../app/layout/Loading";
 import '../../css/chat.css';
 import Modal from './Modal';
 
-function Sidebar({socket,online,children}) {
+function Sidebar({socket,online,children,room}) {
     const dispatch = useDispatch();
 
     //selectors
@@ -35,6 +35,10 @@ function Sidebar({socket,online,children}) {
         }
     }, [dispatch])
 
+    useEffect(()=>{
+        if(room)
+        setSidebar("active");
+    },[room])
 
     useEffect(() => {
         if (allusers.length > 0) {
@@ -144,9 +148,6 @@ function Sidebar({socket,online,children}) {
                                 <hr style={{ backgroundColor: "white" }} /></>}
 
 
-
-
-                            <hr style={{ backgroundColor: "white" }} />
 
                             <li>Search Users</li>
 

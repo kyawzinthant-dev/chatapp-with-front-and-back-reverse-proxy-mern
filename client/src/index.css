@@ -18,10 +18,10 @@
     line-height: 1.5;
     color: #212529;
     text-align: left;
-    background-image: url('https://wallpapercave.com/wp/5PEseGI.jpg') !important;
+    background-image: url('https://image.freepik.com/free-vector/chat-time-cartoon-doodle-vector-seamless-pattern-background-backdrop-texture-back-speech-bubble-message-emoji-letter-gadget-cute-colorful-design-isolated-white-background_153823-112.jpg') !important;
      }
     #root{
-      background-color: rgba(0, 0, 0, 0.404);
+      /* background-color: rgb(119, 162, 218); */
     }
   [tabindex="-1"]:focus {
     outline: 0 !important; }
@@ -7709,13 +7709,14 @@
   #sidebar {
     min-width: 250px;
     max-width: 250px;
-    background: #121316f6;
+    background: rgb(0, 0, 0);
     color: #fff;
     -webkit-transition: all 1s;
     -o-transition: all 1s;
     transition: all 1s;
     position: relative;
     z-index: 1;
+    height: 100vh;
   }
     #sidebar .h6 {
       color: #fff; }

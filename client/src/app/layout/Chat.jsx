@@ -88,7 +88,7 @@ function Chat() {
 
     return (
         <div>
-            <SideBar socket={socket} online={online.map(e=>e.uid)}>
+            <SideBar socket={socket} online={online.map(e=>e.uid)} room={room}>
                     {room && <ChatRoom online={online.map(e=>e.uid)} room={room} socket={socket}/>}
             </SideBar>
            
